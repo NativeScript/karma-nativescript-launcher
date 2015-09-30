@@ -20,10 +20,12 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 	baseBrowserDecorator(self);
 	self.log = logger.create('launcher');
 
-	self.platform = args.platform;
+	if (!args.platform) {
+		self.log.error('No platform specified.');
+		process.exit(1);
+	}
 
-	//TODO: check platform - the launcher should not be used directly,
-	// but with a karma custom launcher, configured by `tns test init`
+	self.platform = args.platform;
 
 	emitter.on('file_list_modified', function() {
 		self.log.info('Deploying NativeScript unit tests...');
@@ -40,16 +42,18 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		self.markCaptured();
 
 		executor.schedule();
-	})
+	});
+
+	function logDebugOutput(data) {
+		if (config.logLevel === config.LOG_DEBUG) {
+			process.stdout.write(data);
+		}
+	}
 
 	self.liveSyncAndRun = function() {
 		var runner = spawn(tnsCli, ['dev-test', self.platform, '--port', self.parsedUrl.port]);
-		runner.stdout.on('data', function(data) {
-			//process.stdout.write(data);
-		});
-		runner.stderr.on('data', function(data) {
-			//process.stderr.write(data);
-		});
+		runner.stdout.on('data', logDebugOutput);
+		runner.stderr.on('data', logDebugOutput);
 		runner.on('exit', function(code) {
 			self.log.info('NativeScript deployment completed with code ' + code);
 			if (code) {
