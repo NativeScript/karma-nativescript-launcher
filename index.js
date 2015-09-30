@@ -51,7 +51,11 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 	}
 
 	self.liveSyncAndRun = function() {
-		var runner = spawn(tnsCli, ['dev-test', self.platform, '--port', self.parsedUrl.port]);
+		var tnsArgs = ['dev-test', self.platform, '--port', self.parsedUrl.port];
+		if (args.arguments) {
+			tnsArgs = tnsArgs.concat(args.arguments);
+		}
+		var runner = spawn(tnsCli, tnsArgs);
 		runner.stdout.on('data', logDebugOutput);
 		runner.stderr.on('data', logDebugOutput);
 		runner.on('exit', function(code) {
