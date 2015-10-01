@@ -9,10 +9,10 @@ install:
 git:
   submodules: false
 deploy:
-- provider: npm
+  provider: npm
   email: nativescript@telerik.com
   api_key:
-    secure: KISJen/tS+355itLT6eI5rBAwL9utOLDT1l8z6dJKLdt24l9LvKxhHlYI/WOCVPvNCUQ8cQAqGcVgmD+SmTpoCkBAHMml3C/zGZSwYd6Km1/1Eu0JtodbtLjLaTaPYpU+I7Z2bC6eFdb8hIrFEZhf92oQAyLCgBQJpu3ECjxXgI=
+    secure: oxOVfeNMY87F/8YFp8fEnrztbrmgFIzmrVt3zuLSfRcK5b2Q0oc9+hmHvAYvpOqP+HR3hG3ItxFMlAtxd6tmgyk7Kriy+KqbkSXCIImYbQMLYthyISI9uuZMuYHH/lUpliwijrSYBZfJ8MdW33maIS9h2NLENHOWeoojxeoHHW9hQ4lgdcIs7cqRc8BuVzJaInMps77FnsU9XHzbB0cMFVLRjsS8vROcMyaowSFyHkgKJaQBtgGRCZfKhcXbtdoQzXCKSavE8jWBu8QwNeGUOPPB+ErGmzNgSvk56PNsZcLFfcRyNmvHX9NcvxtYLC6z2QDJOULvGvIFiZCqaDGq6B9kGds4zSuMAwnCCDafwovjML0NrVANxYf2Eb27V5g+OB1en4s69pwW8z6B97Qvk0t4O3uuxOle7Z9KJ2kgqM70qmLeo/UxEBjcueRtAtwe2elc3/yrJda5vB3qls6g7/K4aAk5FWgCdjTGvpcie5yzZiIvqGOtz0EpGxG4JdkGQGrj+3BhZ2qFl+OgyXaZ62k8iw1qmBqyypP9aGIpyNyX4sQrXIh2bsToHTlIB8Sb9qohxI7AruTPlkP7Cgqjx6v07186+pbCVX2z+3W4Iz+Pl81PonpyEvKwKdqbtd8kvzX89RfD8B4Mmzp3wIHIftHOxfEqoJ4gJ8RJkNgJ8gA=
   on:
     tags: true
     all_branches: true
