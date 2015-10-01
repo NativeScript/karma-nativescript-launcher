@@ -37,7 +37,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-shell");
 
 	grunt.registerTask("set_package_version", function(version) {
-		varsion = version || travisTag;		
+		version = version || travisTag;		
 		if (!version) {
 			return;
 		}
