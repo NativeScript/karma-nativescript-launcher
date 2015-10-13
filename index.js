@@ -9,10 +9,9 @@ var util = require('util');
 
 var TEST_RUNNER_DIR = path.join(__dirname, 'runner');
 
-var tnsCli = {
+var tnsCliExecutable = {
 	'win32': 'tns.cmd'
 }[require('os').platform()] || 'tns';
-
 
 function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitter, executor) {
 	var self = this;
@@ -26,6 +25,8 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 	}
 
 	self.platform = args.platform;
+
+	var launcherConfig = config._NS || {};
 
 	emitter.on('file_list_modified', function() {
 		self.log.info('Deploying NativeScript unit tests...');
@@ -45,9 +46,7 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 	});
 
 	function logDebugOutput(data) {
-		if (config.logLevel === config.LOG_DEBUG) {
-			process.stdout.write(data);
-		}
+		process.stdout.write(data);
 	}
 
 	self.liveSyncAndRun = function() {
@@ -55,6 +54,22 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		if (args.arguments) {
 			tnsArgs = tnsArgs.concat(args.arguments);
 		}
+
+		if (launcherConfig.log) {
+			tnsArgs = tnsArgs.concat(['--log', launcherConfig.log]);
+		}
+		if (typeof launcherConfig.path !== 'undefined') {
+			tnsArgs = tnsArgs.concat(['--path', launcherConfig.path]);
+		}
+
+		var tnsCli = tnsCliExecutable;
+		if (launcherConfig.tns) {
+			tnsCli = launcherConfig.node || 'node';
+			tnsArgs.unshift(launcherConfig.tns);
+		}
+
+		self.log.debug('Starting "' + tnsCli + '" ' + tnsArgs.join(' '));
+
 		var runner = spawn(tnsCli, tnsArgs);
 		runner.stdout.on('data', logDebugOutput);
 		runner.stderr.on('data', logDebugOutput);
