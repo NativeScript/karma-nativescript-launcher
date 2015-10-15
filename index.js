@@ -61,6 +61,9 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		if (typeof launcherConfig.path !== 'undefined') {
 			tnsArgs = tnsArgs.concat(['--path', launcherConfig.path]);
 		}
+		if (launcherConfig.debugTransport) {
+			tnsArgs.push('--debug-transport');
+		}
 
 		var tnsCli = tnsCliExecutable;
 		if (launcherConfig.tns) {
