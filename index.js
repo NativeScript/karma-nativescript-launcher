@@ -61,9 +61,6 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		if (typeof launcherConfig.path !== 'undefined') {
 			tnsArgs = tnsArgs.concat(['--path', launcherConfig.path]);
 		}
-		if (launcherConfig.debugTransport) {
-			tnsArgs.push('--debug-transport');
-		}
 
 		var tnsCli = tnsCliExecutable;
 		if (launcherConfig.tns) {
@@ -74,6 +71,9 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		self.log.debug('Starting "' + tnsCli + '" ' + tnsArgs.join(' '));
 
 		var runner = spawn(tnsCli, tnsArgs);
+		var optionsStr = JSON.stringify(launcherConfig.options);
+		runner.stdin.end(optionsStr);
+
 		runner.stdout.on('data', logDebugOutput);
 		runner.stderr.on('data', logDebugOutput);
 		runner.on('exit', function(code) {
