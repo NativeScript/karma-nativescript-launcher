@@ -1,6 +1,8 @@
 'use strict';
 
-var spawn = require('child_process').spawn;
+var fork = require('child_process').fork;
+var which = require('shelljs').which;
+
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
@@ -9,9 +11,10 @@ var util = require('util');
 
 var TEST_RUNNER_DIR = path.join(__dirname, 'runner');
 
-var tnsCliExecutable = {
-	'win32': 'tns.cmd'
-}[require('os').platform()] || 'tns';
+function getTnsCliExecutablePath() {
+	var pathToTnsExecutable = which('tns');
+	return path.join(path.dirname(pathToTnsExecutable), "nativescript.js");
+}
 
 function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitter, executor) {
 	var self = this;
@@ -58,24 +61,26 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		if (launcherConfig.log) {
 			tnsArgs = tnsArgs.concat(['--log', launcherConfig.log]);
 		}
+
 		if (typeof launcherConfig.path !== 'undefined') {
 			tnsArgs = tnsArgs.concat(['--path', launcherConfig.path]);
 		}
 
-		var tnsCli = tnsCliExecutable;
-		if (launcherConfig.tns) {
-			tnsCli = launcherConfig.node || 'node';
-			tnsArgs.unshift(launcherConfig.tns);
-		}
-
+		var tnsCli = launcherConfig.tns || getTnsCliExecutablePath();
 		self.log.debug('Starting "' + tnsCli + '" ' + tnsArgs.join(' '));
 
-		var runner = spawn(tnsCli, tnsArgs);
-		var optionsStr = JSON.stringify(launcherConfig.options);
-		runner.stdin.end(optionsStr);
+		var runner = fork(tnsCli, tnsArgs);
 
-		runner.stdout.on('data', logDebugOutput);
-		runner.stderr.on('data', logDebugOutput);
+		runner.on('message', function(data) {
+			if (data === "ready") {
+				// Child process is ready to read the data
+				var optionsStr = JSON.stringify(launcherConfig.options);
+				runner.send(optionsStr);
+			}
+		});
+
+		runner.on('error', logDebugOutput);
+		runner.on('data', logDebugOutput);
 		runner.on('exit', function(code) {
 			self.log.info('NativeScript deployment completed with code ' + code);
 			if (code) {
