@@ -31,13 +31,6 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 
 	var launcherConfig = config._NS || {};
 
-	emitter.on('file_list_modified', function() {
-		self.log.info('Deploying NativeScript unit tests...');
-		if (self.parsedUrl) {
-			self.liveSyncAndRun(self.parsedUrl);
-		}
-	})
-
 	emitter.on('browser_register', function(browser) {
 		if (!browser.id || browser.id.indexOf('NativeScript') !== 0) {
 			return;
@@ -52,6 +45,7 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 		process.stdout.write(data);
 	}
 
+	// Consider removing this in case we drop support for `tns dev-test` command
 	self.liveSyncAndRun = function() {
 		var tnsArgs = ['dev-test', self.platform, '--port', self.parsedUrl.port];
 		if (args.arguments) {
@@ -91,7 +85,7 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 
 	self.start = function(url) {
 		self.parsedUrl = URL.parse(url);
-		self.liveSyncAndRun();
+		process.send({ url: self.parsedUrl, launcherConfig: JSON.stringify(launcherConfig.options) });
 	}
 }
 
