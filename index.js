@@ -38,7 +38,14 @@ function NativeScriptLauncher(baseBrowserDecorator, logger, config, args, emitte
 
 		self.markCaptured();
 
-		executor.schedule();
+		// In case --watch is passed to CLI, each change in file should restart the tests.
+		// When a new browser is registered, in case `singleRun` is false (that's when --watch is not passed)
+		// tests should be scheduled.
+		// When `singleRun` is true, karma automatically runs the tests when browser is registered,
+		// so do not schedule them in this case.
+		if(launcherConfig.options.watch) {
+			executor.schedule();
+		}
 	});
 
 	function logDebugOutput(data) {
