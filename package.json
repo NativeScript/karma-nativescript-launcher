@@ -1,18 +1,23 @@
 {
   "name": "karma-nativescript-launcher",
-  "version": "0.4.1",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "exit 0"
   },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE.md"
+  ],
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/NativeScript/karma-nativescript-launcher.git"
   },
   "dependencies": {
-    "shelljs": "0.9.2"
+    "shelljs": "~0.9.2"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
